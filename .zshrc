@@ -31,3 +31,19 @@ export PATH="/usr/local/bin:$PATH"
 eval "$(rbenv init - --no-rehash)"
 
 
+
+# Created by `pipx` on 2025-01-10 16:19:54
+export PATH="$PATH:/Users/rafeejenkins/.local/bin"
+
+# pnpm
+export PNPM_HOME="/Users/rafeejenkins/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end
+
+# pyenv
+export PYENV_ROOT="$HOME/.pyenv"
+[[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
+eval "$(pyenv init - zsh)"
