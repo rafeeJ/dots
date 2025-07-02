@@ -120,6 +120,10 @@ setup_dotfiles() {
   log "Linking configuration files …"
   backup_if_needed "$HOME/.p10k.zsh"
   ln -sf "$repo_dir/.p10k.zsh" "$HOME/.p10k.zsh"
+
+  # Link .zshrc from repo
+  backup_if_needed "$HOME/.zshrc"
+  ln -sf "$repo_dir/.zshrc" "$HOME/.zshrc"
 }
 
 # ------------------------
@@ -188,6 +192,12 @@ configure_git() {
 # ------------------------
 configure_p10k() {
   local zshrc="$HOME/.zshrc"
+  # If ~/.zshrc is a symlink (managed by dotfiles repo), assume it already contains required settings.
+  if [[ -L "$zshrc" ]]; then
+    log "~/.zshrc is symlinked; skipping automatic Powerlevel10k configuration."
+    return
+  fi
+
   # Ensure .zshrc exists
   if [[ ! -f "$zshrc" ]]; then
     warn "~/.zshrc not found; creating a minimal one."
@@ -212,6 +222,16 @@ configure_p10k() {
   if ! grep -q 'source .*\.p10k\.zsh' "$zshrc"; then
     log "Adding .p10k.zsh sourcing to .zshrc"
     { echo ''; echo '# Load Powerlevel10k configuration'; echo '[[ -f ~/.p10k.zsh ]] && source ~/.p10k.zsh'; } >> "$zshrc"
+  fi
+
+  # Ensure desired plugins are enabled
+  local desired_plugins="git zsh-nvm zsh-autosuggestions zsh-history-substring-search zsh-syntax-highlighting"
+  if grep -q '^plugins=' "$zshrc"; then
+    # Replace the line entirely to guarantee ordering and presence
+    log "Updating Oh My Zsh plugins list"
+    sed -i '' "s/^plugins=.*/plugins=(${desired_plugins})/" "$zshrc"
+  else
+    echo "plugins=(${desired_plugins})" >> "$zshrc"
   fi
 }
 
