@@ -152,9 +152,6 @@ install_xcode_cli() {
 install_fonts() {
   if (( SKIP_BREW )); then return; fi
   if [[ "$OS" == "Darwin" ]]; then
-    if ! brew tap | grep -q "^homebrew/cask-fonts$"; then
-      brew tap homebrew/cask-fonts
-    fi
     if ! brew list --cask | grep -q "^font-meslo-lg-nerd-font$"; then
       log "Installing MesloLGS NF font …"
       brew install --cask font-meslo-lg-nerd-font
