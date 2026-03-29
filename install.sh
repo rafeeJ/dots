@@ -13,6 +13,15 @@ NC="\033[0m"
 log()   { echo -e "${GREEN}==> ${NC}$1"; }
 warn()  { echo -e "${YELLOW}Warning:${NC} $1"; }
 
+backup_if_needed() {
+  local file="$1"
+  if [[ -f "$file" ]] && [[ ! -L "$file" ]]; then
+    local backup="${file}.backup.$(date +%Y%m%d_%H%M%S)"
+    log "Backing up $file to $backup"
+    mv "$file" "$backup"
+  fi
+}
+
 # New: basic traps for nicer termination messages
 trap 'echo -e "\n${YELLOW}Script aborted${NC}"' ERR
 trap 'echo -e "\n${GREEN}Finished.${NC}"' EXIT
